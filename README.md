@@ -1,4 +1,4 @@
-Implement a program that synchronizes two folders: source and replica. The program should maintain a full, identical copy of source folder at replica folder
+# Implement a program that synchronizes two folders: source and replica. The program should maintain a full, identical copy of source folder at replica folder
 
 TODO 1: Synchronization must be one-way: after the synchronization content of the replica folder should be modified to exactly match content of the source folder;
 
