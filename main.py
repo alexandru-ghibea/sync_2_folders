@@ -30,36 +30,52 @@ if not os.path.isdir(args.replica):
     logging.error(f'Source folder - {args.replica} - does not exist')
     exit(1)
 
+# TODO 1
 
-def sync_folder(source_path, replica_path):
-    ''' Synchronize source folder with replica folder '''
-    files_modified = []
+
+def sync_folders(source_path, replica_path):
+    modified_files = []
+    # iterate over the files and folders in the source folder
     for root, dirs, files in os.walk(source_path):
+        # check if the corresponding subfolder exists in the replica folder
         replica_root = os.path.join(
             replica_path, os.path.relpath(root, source_path))
         if not os.path.isdir(replica_root):
             os.makedirs(replica_root)
+        # copy new or modified files from the source to the replica folder
         for file in files:
-            source_file_path = os.path.join(root, file)
-            replica_file_path = os.path.join(replica_root, file)
-            source_stat = os.stat(source_file_path)
-            replica_stat = os.stat(replica_file_path) if os.path.exists(
-                replica_path) else None
+            source_file = os.path.join(root, file)
+            replica_file = os.path.join(replica_root, file)
+            source_stat = os.stat(source_file)
+            replica_stat = os.stat(replica_file) if os.path.exists(
+                replica_file) else None
             if replica_stat is None or source_stat.st_mtime > replica_stat.st_mtime:
-                shutil.copy2(source_file_path, replica_file_path)
-                files_modified.append(file)
+                shutil.copy2(source_file, replica_file)
+                modified_files.append(replica_file)
                 log_operation(
-                    'create' if replica_stat is None else 'modify', replica_file_path)
-            for replica_file in os.listdir(replica_root):
-                pass
-    return files_modified
+                    'create' if replica_stat is None else 'modify', replica_file)
+        # delete files or folders that are in the replica but not in the source folder
+        for replica_file in os.listdir(replica_root):
+            source_file = os.path.join(root, replica_file)
+            replica_file = os.path.join(replica_root, replica_file)
+            if not os.path.exists(source_file):
+                if os.path.isdir(replica_file):
+                    shutil.rmtree(replica_file)
+                else:
+                    os.remove(replica_file)
+                modified_files.append(replica_file)
+                log_operation('delete', replica_file)
+    return modified_files
 
 
 def log_operation(operation, path):
-    message = logging.info(f'{operation} - {path}')
+    ''' Log operation '''
+    message = f'{operation.upper()} - {path}'
     print(message)
+    logging.info(message)
 
 
+# TODO 2: set up a loop to periodically synchronize the folders
 while True:
-    sync_folder(args.source, args.replica)
+    sync_folders(args.source, args.replica)
     time.sleep(args.i)
