@@ -53,7 +53,7 @@ def sync_folders(source_path, replica_path):
                 shutil.copy2(source_file, replica_file)
                 modified_files.append(replica_file)
                 log_operation(
-                    'create' if replica_stat is None else 'modify', replica_file)
+                    'create' if replica_stat is None else 'copy', replica_file)
         # delete files or folders that are in the replica but not in the source folder
         for replica_file in os.listdir(replica_root):
             source_file = os.path.join(root, replica_file)
@@ -69,7 +69,7 @@ def sync_folders(source_path, replica_path):
 
 
 def log_operation(operation, path):
-    ''' Log operation '''
+    """ Log the operation performed on the path """
     message = f'{operation.upper()} - {path}'
     print(message)
     logging.info(message)
