@@ -6,7 +6,7 @@ TODO 2: Synchronization should be performed periodically.
 
 TODO 3: File creation/copying/removal operations should be logged to a file and to the console output;
 
-TODO 4(Done): Folder paths, synchronization interval and log file path should be provided using the command line arguments;
+TODO 4: Folder paths, synchronization interval and log file path should be provided using the command line arguments;
 
 TODO 5: It is undesirable to use third-party libraries that implement folder synchronization;
 
